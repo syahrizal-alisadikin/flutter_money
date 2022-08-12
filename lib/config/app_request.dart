@@ -1,0 +1,26 @@
+import 'package:d_method/d_method.dart';
+import 'package:http/http.dart' as http;
+
+class AppRequest {
+  static Future<Map?> gets(String url, Map<String, String>? headers) async {
+    try {
+      http.Response response = await http.get(Uri.parse(url), headers: headers);
+      DMethod.printTitle("Try - $url", response.body);
+    } catch (e) {
+      DMethod.printTitle("Catch - $url", e.toString());
+      return null;
+    }
+  }
+
+  static Future<Map?> post(
+      String url, Object? body, Map<String, String>? headers) async {
+    try {
+      http.Response response =
+          await http.post(Uri.parse(url), body: body, headers: headers);
+      DMethod.printTitle("Try - $url", response.body);
+    } catch (e) {
+      DMethod.printTitle("Catch - $url", e.toString());
+      return null;
+    }
+  }
+}
