@@ -6,35 +6,34 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:money_record/config/app_asset.dart';
 import 'package:money_record/config/app_color.dart';
 import 'package:money_record/data/source/source_user.dart';
-import 'package:money_record/pages/auth/register.dart';
+import 'package:money_record/pages/auth/login.dart';
 import 'package:money_record/pages/home.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
+  final controllerName = TextEditingController();
   final controllerEmail = TextEditingController();
   final controllerPassword = TextEditingController();
   final formValidation = GlobalKey<FormState>();
-  login() async {
+  register() async {
     if (formValidation.currentState!.validate()) {
-      bool success = await SourceUser.login(
+      bool success = await SourceUser.register(
+        controllerName.text,
         controllerEmail.text,
         controllerPassword.text,
       );
       print('Info: $success');
       if (success) {
-        DInfo.dialogSuccess('Login success');
+        DInfo.dialogSuccess('Register Berhasil ! Silahkan Login');
         DInfo.closeDialog(actionAfterClose: () {
-          Get.off(() => HomePage());
+          Get.off(() => LoginPage());
         });
-      } else {
-        DInfo.dialogError('Login failed');
-        DInfo.closeDialog();
       }
     }
   }
@@ -62,6 +61,40 @@ class _LoginPageState extends State<LoginPage> {
                         children: [
                           Image.asset(AppAsset.logo),
                           DView.spaceHeight(24),
+                          TextFormField(
+                            controller: controllerName,
+                            validator: (value) =>
+                                value == "" ? 'Please enter your name' : null,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                            ),
+                            decoration: InputDecoration(
+                              fillColor: AppColor.primary.withOpacity(0.6),
+                              filled: true,
+
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide.none,
+                              ),
+                              hintText: "Masukan Name",
+                              // labelText: 'Enter your username',
+                              hintStyle: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                              ),
+                              isDense: true,
+                              contentPadding: EdgeInsets.symmetric(
+                                vertical: 12,
+                                horizontal: 16,
+                              ),
+                            ),
+                          ),
+                          DView.spaceHeight(16),
                           TextFormField(
                             controller: controllerEmail,
                             validator: (value) =>
@@ -139,13 +172,13 @@ class _LoginPageState extends State<LoginPage> {
                             color: AppColor.primary,
                             borderRadius: BorderRadius.circular(16),
                             child: InkWell(
-                              onTap: () => login(),
+                              onTap: () => register(),
                               borderRadius: BorderRadius.circular(16),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 40, vertical: 12),
                                 child: Text(
-                                  "Login",
+                                  "Register",
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
@@ -170,20 +203,20 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Belum punya akun nih?',
+                          'Sudah punya akun nih?',
                           style: GoogleFonts.roboto(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
-                            color: Colors.black,
+                            color: Colors.white,
                           ),
                         ),
-                        SizedBox(width: 5),
+                        const SizedBox(width: 5),
                         GestureDetector(
                           onTap: () {
-                            Get.to(() => const RegisterPage());
+                            Get.back();
                           },
                           child: Text(
-                            'Register',
+                            'Login',
                             style: GoogleFonts.roboto(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
