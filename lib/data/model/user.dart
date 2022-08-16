@@ -12,8 +12,8 @@ class User {
   String? name;
   String? email;
   String? password;
-  DateTime? createdAt;
-  DateTime? updatedAt;
+  String? createdAt;
+  String? updatedAt;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
         idUser: json["id_user"],
