@@ -14,7 +14,7 @@ class Session {
     String stringUser = jsonEncode(userMap);
     bool success = await pref.setString('user', stringUser);
     if (success) {
-      final cUser = Get.put(UserController());
+      final cUser = Get.put(CUser());
       cUser.setData(user);
     }
     return success;
@@ -26,20 +26,20 @@ class Session {
     final pref = await SharedPreferences.getInstance();
     String? stringUser = pref.getString('user');
 
-    if (stringUser == null) {
-      return user;
+    if (stringUser != null) {
+      Map<String, dynamic> userMap = jsonDecode(stringUser);
+      user = User.fromJson(userMap);
     }
-    Map<String, dynamic> userMap = jsonDecode(stringUser);
-    final cUser = Get.put(UserController());
+    final cUser = Get.put(CUser());
     cUser.setData(user);
-    return User.fromJson(userMap);
+    return user;
   }
 
   // Clear user from shared preferences
   static Future<bool> clearUser() async {
     final pref = await SharedPreferences.getInstance();
     bool success = await pref.remove('user');
-    final cUser = Get.put(UserController());
+    final cUser = Get.put(CUser());
     cUser.setData(User());
     return success;
   }
