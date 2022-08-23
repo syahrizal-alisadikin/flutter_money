@@ -8,7 +8,7 @@ import 'package:money_record/pages/auth/login.dart';
 import 'package:money_record/pages/home.dart';
 
 void main() {
-  initializeDateFormatting().then((value) => runApp(MyApp()));
+  initializeDateFormatting().then((value) => runApp(const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -29,9 +29,9 @@ class MyApp extends StatelessWidget {
       ),
       home: FutureBuilder(builder: (context, AsyncSnapshot<User?> snapshot) {
         if (snapshot.data == null) {
-          return LoginPage();
+          return const LoginPage();
         } else {
-          return HomePage();
+          return const HomePage();
         }
       }),
     );

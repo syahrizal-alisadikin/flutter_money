@@ -1,12 +1,15 @@
 import 'package:d_chart/d_chart.dart';
+import 'package:d_info/d_info.dart';
 import 'package:d_view/d_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:money_record/config/app_asset.dart';
 import 'package:money_record/config/app_color.dart';
+import 'package:money_record/config/app_format.dart';
 import 'package:money_record/config/session.dart';
 import 'package:money_record/pages/auth/login.dart';
+import 'package:money_record/presentasi/controller/c_home.dart';
 import 'package:money_record/presentasi/controller/c_user.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,10 +21,143 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final cUser = Get.put(CUser());
+  final cHome = Get.put(CHome());
+  @override
+  void initState() {
+    cHome.getAnalysis(cUser.data.idUser!);
+    super.initState();
+  }
+
+  logout() {
+    DInfo.dialogSuccess('Logout success');
+    DInfo.closeDialog(actionAfterClose: () {
+      Session.clearUser();
+      Get.off(() => const LoginPage());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        endDrawer: Drawer(),
+        endDrawer: Drawer(
+          child: ListView(
+            children: [
+              DrawerHeader(
+                margin: EdgeInsets.only(bottom: 0),
+                padding: EdgeInsets.fromLTRB(20, 16, 16, 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Row(
+                      children: [
+                        Image.asset(AppAsset.profile, width: 80, height: 80),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Obx(
+                                  () {
+                                    return Text(
+                                      cUser.data.name ?? "Tidak ada ",
+                                      style: GoogleFonts.poppins(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600),
+                                    );
+                                  },
+                                ),
+                                Obx(
+                                  () {
+                                    return Text(
+                                      cUser.data.email ?? "Tidak ada ",
+                                      style: GoogleFonts.poppins(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w300),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    DView.spaceHeight(10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Material(
+                        color: AppColor.primary,
+                        borderRadius: BorderRadius.circular(10),
+                        child: InkWell(
+                          onTap: () {
+                            logout();
+                          },
+                          borderRadius: BorderRadius.circular(10),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 8),
+                            child: Text(
+                              "Logout",
+                              style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              const Divider(
+                height: 1,
+              ),
+              ListTile(
+                onTap: () {},
+                leading: Icon(Icons.add),
+                horizontalTitleGap: 0,
+                title: Text('Tambahan baru'),
+                trailing: Icon(Icons.navigate_next),
+              ),
+              const Divider(
+                height: 1,
+              ),
+              ListTile(
+                onTap: () {},
+                leading: Icon(Icons.south_west),
+                horizontalTitleGap: 0,
+                title: Text('Pemasukan'),
+                trailing: Icon(Icons.navigate_next),
+              ),
+              const Divider(
+                height: 1,
+              ),
+              ListTile(
+                onTap: () {},
+                leading: Icon(Icons.north_east),
+                horizontalTitleGap: 0,
+                title: Text('Pengeluaran'),
+                trailing: Icon(Icons.navigate_next),
+              ),
+              const Divider(
+                height: 1,
+              ),
+              ListTile(
+                onTap: () {},
+                leading: Icon(Icons.history),
+                horizontalTitleGap: 0,
+                title: Text('Riwayat'),
+                trailing: Icon(Icons.navigate_next),
+              ),
+              const Divider(
+                height: 1,
+              ),
+            ],
+          ),
+        ),
         body: Column(
           children: [
             Padding(
@@ -103,37 +239,14 @@ class _HomePageState extends State<HomePage> {
                   ),
                   DView.spaceHeight(30),
                   Text(
-                    "Pengeluaran Minggu ini",
+                    "Pengeluaran Minggu sekarang",
                     style: Theme.of(context).textTheme.headline6!.copyWith(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                         ),
                   ),
                   DView.spaceHeight(),
-                  AspectRatio(
-                    aspectRatio: 9 / 6,
-                    child: DChartBar(
-                      data: [
-                        {
-                          'id': 'Bar',
-                          'data': [
-                            {'domain': '2020', 'measure': 3},
-                            {'domain': '2021', 'measure': 4},
-                            {'domain': '2022', 'measure': 6},
-                            {'domain': '2023', 'measure': 0.3},
-                          ],
-                        },
-                      ],
-                      domainLabelPaddingToAxisLine: 16,
-                      axisLineTick: 2,
-                      axisLinePointTick: 2,
-                      axisLinePointWidth: 10,
-                      axisLineColor: Colors.green,
-                      measureLabelPaddingToAxisLine: 16,
-                      barColor: (barData, index, id) => Colors.green,
-                      showBarValue: true,
-                    ),
-                  ),
+                  Weekly(),
                   DView.spaceHeight(30),
                   Text(
                     "Perbandingan Bulan ini",
@@ -142,85 +255,113 @@ class _HomePageState extends State<HomePage> {
                           fontWeight: FontWeight.w600,
                         ),
                   ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.5,
-                        height: MediaQuery.of(context).size.height * 0.3,
-                        child: Stack(
-                          children: [
-                            DChartPie(
-                              data: [
-                                {'domain': 'Flutter', 'measure': 28},
-                                {'domain': 'React Native', 'measure': 27},
-                              ],
-                              fillColor: (pieData, index) => Colors.purple,
-                              donutWidth: 30,
-                              labelColor: Colors.white,
-                            ),
-                            Center(
-                              child: Text(
-                                "16%",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline4!
-                                    .copyWith(
-                                      color: AppColor.primary,
-                                    ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                height: 16,
-                                width: 16,
-                                color: AppColor.chart,
-                              ),
-                              DView.spaceWidth(7),
-                              Text("Pemasukan")
-                            ],
-                          ),
-                          DView.spaceHeight(8),
-                          Row(
-                            children: [
-                              Container(
-                                height: 16,
-                                width: 16,
-                                color: AppColor.bg,
-                              ),
-                              DView.spaceWidth(5),
-                              Text("Pengeluaran")
-                            ],
-                          ),
-                          DView.spaceHeight(18),
-                          Text("Pemasukan"),
-                          Text("Lebih besar 20%"),
-                          Text("dari pengeluaran"),
-                          DView.spaceHeight(10),
-                          Text("Atau Setara"),
-                          Text(
-                            "Rp 100.000",
-                            style: GoogleFonts.poppins(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: AppColor.chart,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                  Monthly(context),
                 ],
               ),
             )
           ],
         ));
+  }
+
+  Row Monthly(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(
+          width: MediaQuery.of(context).size.width * 0.5,
+          height: MediaQuery.of(context).size.height * 0.3,
+          child: Stack(
+            children: [
+              DChartPie(
+                data: [
+                  {'domain': 'Flutter', 'measure': 28},
+                  {'domain': 'React Native', 'measure': 27},
+                ],
+                fillColor: (pieData, index) => Colors.purple,
+                donutWidth: 30,
+                labelColor: Colors.white,
+              ),
+              Center(
+                child: Text(
+                  "16%",
+                  style: Theme.of(context).textTheme.headline4!.copyWith(
+                        color: AppColor.primary,
+                      ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  height: 16,
+                  width: 16,
+                  color: AppColor.chart,
+                ),
+                DView.spaceWidth(7),
+                Text("Pemasukan")
+              ],
+            ),
+            DView.spaceHeight(8),
+            Row(
+              children: [
+                Container(
+                  height: 16,
+                  width: 16,
+                  color: AppColor.bg,
+                ),
+                DView.spaceWidth(5),
+                Text("Pengeluaran")
+              ],
+            ),
+            DView.spaceHeight(18),
+            Text("Pemasukan"),
+            Text("Lebih besar 20%"),
+            Text("dari pengeluaran"),
+            DView.spaceHeight(10),
+            Text("Atau Setara dengan"),
+            Text(
+              "Rp 100.000",
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: AppColor.chart,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  AspectRatio Weekly() {
+    return AspectRatio(
+      aspectRatio: 9 / 6,
+      child: Obx(() {
+        return DChartBar(
+          data: [
+            {
+              'id': 'Bar',
+              'data': List.generate(7, (index) {
+                return {
+                  'domain': cHome.weekText()[index],
+                  'measure': cHome.weeks[index]
+                };
+              }),
+            },
+          ],
+          domainLabelPaddingToAxisLine: 8,
+          axisLineTick: 2,
+          axisLineColor: AppColor.primary,
+          measureLabelPaddingToAxisLine: 16,
+          barColor: (barData, index, id) => AppColor.primary,
+          showBarValue: true,
+        );
+      }),
+    );
   }
 
   Material CardToday(BuildContext context) {
@@ -233,23 +374,27 @@ class _HomePageState extends State<HomePage> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 20, 16, 4),
-            child: Text(
-              "Rp 5000.000",
-              style: Theme.of(context).textTheme.headline4!.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: Color.fromARGB(255, 65, 206, 201),
-                  ),
-            ),
+            child: Obx(() {
+              return Text(
+                AppFormat.currency(cHome.today.toString()),
+                style: Theme.of(context).textTheme.headline4!.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: Color.fromARGB(255, 65, 206, 201),
+                    ),
+              );
+            }),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 30),
-            child: Text(
-              "20% Pengeluaran hari ini",
-              style: GoogleFonts.poppins(
-                color: AppColor.bg,
-                fontSize: 16,
-              ),
-            ),
+            child: Obx(() {
+              return Text(
+                cHome.todayPercent,
+                style: GoogleFonts.poppins(
+                  color: AppColor.bg,
+                  fontSize: 16,
+                ),
+              );
+            }),
           ),
           Container(
             margin: EdgeInsets.fromLTRB(16, 0, 0, 16),

@@ -26,11 +26,10 @@ class _LoginPageState extends State<LoginPage> {
         controllerEmail.text,
         controllerPassword.text,
       );
-      print('Info: $success');
       if (success) {
         DInfo.dialogSuccess('Login success');
         DInfo.closeDialog(actionAfterClose: () {
-          Get.off(() => HomePage());
+          Get.off(() => const HomePage());
         });
       } else {
         DInfo.dialogError('Login failed');
