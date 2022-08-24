@@ -271,23 +271,38 @@ class _HomePageState extends State<HomePage> {
           height: MediaQuery.of(context).size.height * 0.3,
           child: Stack(
             children: [
-              DChartPie(
-                data: [
-                  {'domain': 'Flutter', 'measure': 28},
-                  {'domain': 'React Native', 'measure': 27},
-                ],
-                fillColor: (pieData, index) => Colors.purple,
-                donutWidth: 30,
-                labelColor: Colors.white,
-              ),
-              Center(
-                child: Text(
-                  "16%",
-                  style: Theme.of(context).textTheme.headline4!.copyWith(
-                        color: AppColor.primary,
-                      ),
-                ),
-              ),
+              Obx(() {
+                return DChartPie(
+                  data: [
+                    {'domain': 'Income', 'measure': cHome.monthIncome},
+                    {'domain': 'Outcome', 'measure': cHome.monthOutcome},
+                    if (cHome.monthIncome == 0 && cHome.monthOutcome == 0)
+                      {'domain': 'nol', 'measure': 1},
+                  ],
+                  fillColor: (pieData, index) {
+                    switch (pieData['domain']) {
+                      case 'Income':
+                        return AppColor.primary;
+                      case 'Outcome':
+                        return AppColor.bg.withOpacity(0.1);
+                      default:
+                        return AppColor.bg.withOpacity(0.5);
+                    }
+                  },
+                  donutWidth: 20,
+                  labelColor: Colors.white,
+                );
+              }),
+              // Center(
+              //   child: Obx(() {
+              //     return Text(
+              //       '${cHome.percentIncome}%',
+              //       style: Theme.of(context).textTheme.headline4!.copyWith(
+              //             color: AppColor.primary,
+              //           ),
+              //     );
+              //   }),
+              // ),
             ],
           ),
         ),
@@ -302,7 +317,17 @@ class _HomePageState extends State<HomePage> {
                   color: AppColor.chart,
                 ),
                 DView.spaceWidth(7),
-                Text("Pemasukan")
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Pemasukan"),
+                    Text(
+                      AppFormat.currency(
+                        cHome.monthIncome.toString(),
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
             DView.spaceHeight(8),
@@ -314,23 +339,33 @@ class _HomePageState extends State<HomePage> {
                   color: AppColor.bg,
                 ),
                 DView.spaceWidth(5),
-                Text("Pengeluaran")
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Pengeluaran"),
+                    Text(
+                      AppFormat.currency(
+                        cHome.monthOutcome.toString(),
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
             DView.spaceHeight(18),
-            Text("Pemasukan"),
-            Text("Lebih besar 20%"),
-            Text("dari pengeluaran"),
-            DView.spaceHeight(10),
-            Text("Atau Setara dengan"),
-            Text(
-              "Rp 100.000",
-              style: GoogleFonts.poppins(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppColor.chart,
-              ),
-            ),
+            Obx(() {
+              return Text('${cHome.monthPercent}');
+            }),
+            Obx(() {
+              return Text(
+                AppFormat.currency(cHome.monthIncome.toString()),
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: AppColor.chart,
+                ),
+              );
+            }),
           ],
         ),
       ],
