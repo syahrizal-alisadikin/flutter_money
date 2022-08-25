@@ -9,6 +9,7 @@ import 'package:money_record/config/app_color.dart';
 import 'package:money_record/config/app_format.dart';
 import 'package:money_record/config/session.dart';
 import 'package:money_record/pages/auth/login.dart';
+import 'package:money_record/pages/history/add.dart';
 import 'package:money_record/presentasi/controller/c_home.dart';
 import 'package:money_record/presentasi/controller/c_user.dart';
 
@@ -39,125 +40,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        endDrawer: Drawer(
-          child: ListView(
-            children: [
-              DrawerHeader(
-                margin: EdgeInsets.only(bottom: 0),
-                padding: EdgeInsets.fromLTRB(20, 16, 16, 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Row(
-                      children: [
-                        Image.asset(AppAsset.profile, width: 80, height: 80),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Obx(
-                                  () {
-                                    return Text(
-                                      cUser.data.name ?? "Tidak ada ",
-                                      style: GoogleFonts.poppins(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600),
-                                    );
-                                  },
-                                ),
-                                Obx(
-                                  () {
-                                    return Text(
-                                      cUser.data.email ?? "Tidak ada ",
-                                      style: GoogleFonts.poppins(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w300),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    DView.spaceHeight(10),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Material(
-                        color: AppColor.primary,
-                        borderRadius: BorderRadius.circular(10),
-                        child: InkWell(
-                          onTap: () {
-                            logout();
-                          },
-                          borderRadius: BorderRadius.circular(10),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 8),
-                            child: Text(
-                              "Logout",
-                              style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              const Divider(
-                height: 1,
-              ),
-              ListTile(
-                onTap: () {},
-                leading: Icon(Icons.add),
-                horizontalTitleGap: 0,
-                title: Text('Tambahan baru'),
-                trailing: Icon(Icons.navigate_next),
-              ),
-              const Divider(
-                height: 1,
-              ),
-              ListTile(
-                onTap: () {},
-                leading: Icon(Icons.south_west),
-                horizontalTitleGap: 0,
-                title: Text('Pemasukan'),
-                trailing: Icon(Icons.navigate_next),
-              ),
-              const Divider(
-                height: 1,
-              ),
-              ListTile(
-                onTap: () {},
-                leading: Icon(Icons.north_east),
-                horizontalTitleGap: 0,
-                title: Text('Pengeluaran'),
-                trailing: Icon(Icons.navigate_next),
-              ),
-              const Divider(
-                height: 1,
-              ),
-              ListTile(
-                onTap: () {},
-                leading: Icon(Icons.history),
-                horizontalTitleGap: 0,
-                title: Text('Riwayat'),
-                trailing: Icon(Icons.navigate_next),
-              ),
-              const Divider(
-                height: 1,
-              ),
-            ],
-          ),
-        ),
+        endDrawer: drawer(),
         body: Column(
           children: [
             Padding(
@@ -263,6 +146,136 @@ class _HomePageState extends State<HomePage> {
         ));
   }
 
+  Drawer drawer() {
+    return Drawer(
+      child: ListView(
+        children: [
+          DrawerHeader(
+            margin: EdgeInsets.only(bottom: 0),
+            padding: EdgeInsets.fromLTRB(20, 16, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Row(
+                  children: [
+                    Image.asset(AppAsset.profile, width: 80, height: 80),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Obx(
+                              () {
+                                return Text(
+                                  cUser.data.name ?? "Tidak ada ",
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600),
+                                );
+                              },
+                            ),
+                            Obx(
+                              () {
+                                return Text(
+                                  cUser.data.email ?? "Tidak ada ",
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w300),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                DView.spaceHeight(10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Material(
+                    color: AppColor.primary,
+                    borderRadius: BorderRadius.circular(10),
+                    child: InkWell(
+                      onTap: () {
+                        logout();
+                      },
+                      borderRadius: BorderRadius.circular(10),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 8),
+                        child: Text(
+                          "Logout",
+                          style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          const Divider(
+            height: 1,
+          ),
+          ListTile(
+            onTap: () {
+              Get.to(
+                () => AddHistory(),
+              )?.then((value) {
+                if (value ?? false) {
+                  cHome.getAnalysis(cUser.data.idUser!);
+                }
+              });
+            },
+            leading: Icon(Icons.add),
+            horizontalTitleGap: 0,
+            title: Text('Tambahan baru'),
+            trailing: Icon(Icons.navigate_next),
+          ),
+          const Divider(
+            height: 1,
+          ),
+          ListTile(
+            onTap: () {},
+            leading: Icon(Icons.south_west),
+            horizontalTitleGap: 0,
+            title: Text('Pemasukan'),
+            trailing: Icon(Icons.navigate_next),
+          ),
+          const Divider(
+            height: 1,
+          ),
+          ListTile(
+            onTap: () {},
+            leading: Icon(Icons.north_east),
+            horizontalTitleGap: 0,
+            title: Text('Pengeluaran'),
+            trailing: Icon(Icons.navigate_next),
+          ),
+          const Divider(
+            height: 1,
+          ),
+          ListTile(
+            onTap: () {},
+            leading: Icon(Icons.history),
+            horizontalTitleGap: 0,
+            title: Text('Riwayat'),
+            trailing: Icon(Icons.navigate_next),
+          ),
+          const Divider(
+            height: 1,
+          ),
+        ],
+      ),
+    );
+  }
+
   Row Monthly(BuildContext context) {
     return Row(
       children: [
@@ -317,17 +330,19 @@ class _HomePageState extends State<HomePage> {
                   color: AppColor.chart,
                 ),
                 DView.spaceWidth(7),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Pemasukan"),
-                    Text(
-                      AppFormat.currency(
-                        cHome.monthIncome.toString(),
+                Obx(() {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Pemasukan"),
+                      Text(
+                        AppFormat.currency(
+                          cHome.monthIncome.toString(),
+                        ),
                       ),
-                    ),
-                  ],
-                )
+                    ],
+                  );
+                })
               ],
             ),
             DView.spaceHeight(8),
@@ -339,16 +354,20 @@ class _HomePageState extends State<HomePage> {
                   color: AppColor.bg,
                 ),
                 DView.spaceWidth(5),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Pengeluaran"),
-                    Text(
-                      AppFormat.currency(
-                        cHome.monthOutcome.toString(),
-                      ),
-                    ),
-                  ],
+                Obx(
+                  () {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Pengeluaran"),
+                        Text(
+                          AppFormat.currency(
+                            cHome.monthOutcome.toString(),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 )
               ],
             ),
