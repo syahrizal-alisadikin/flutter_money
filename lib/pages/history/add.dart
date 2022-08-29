@@ -1,25 +1,66 @@
+import 'dart:convert';
+import 'package:d_info/d_info.dart';
 import 'package:d_input/d_input.dart';
 import 'package:d_view/d_view.dart';
 import 'package:flutter/material.dart';
-import 'package:get/instance_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:money_record/config/app_color.dart';
 import 'package:money_record/config/app_format.dart';
+import 'package:money_record/data/source/source_history.dart';
 import 'package:money_record/presentasi/controller/history/c_add_history.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-class AddHistory extends StatelessWidget {
+import '../../presentasi/controller/c_home.dart';
+import '../../presentasi/controller/c_user.dart';
+
+class AddHistory extends StatefulWidget {
   const AddHistory({Key? key}) : super(key: key);
 
   @override
+  State<AddHistory> createState() => _AddHistoryState();
+}
+
+class _AddHistoryState extends State<AddHistory> {
+  final cAddHistory = Get.put(CAddHistory());
+
+  final cUser = Get.put(CUser());
+
+  final cHome = Get.put(CHome());
+
+  final controllerName = TextEditingController();
+
+  final controllerPrice = TextEditingController();
+
+  void initState() {
+    print(cUser.data.toJson());
+  }
+
+  tambahHistory() async {
+    // print(cAddHistory.type);
+    print(cUser.data.name);
+
+    bool success = await SourceHistory.add(
+      cUser.data.idUser ?? "4",
+      cAddHistory.date,
+      cAddHistory.type,
+      jsonEncode(cAddHistory.items),
+      cAddHistory.total.toString(),
+    );
+
+    if (success) {
+      DInfo.dialogSuccess('Tambah history success');
+      DInfo.closeDialog(actionAfterClose: () {
+        Get.back(result: true);
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final cAddHistory = Get.put(CAddHistory());
-    final controllerName = TextEditingController();
-    final controllerPrice = TextEditingController();
     return Scaffold(
       appBar: DView.appBarLeft(
-        "Tambah History",
+        "Tambah History new",
       ),
       body: ListView(
         padding: EdgeInsets.all(16),
@@ -30,6 +71,7 @@ class AddHistory extends StatelessWidget {
               Obx(() {
                 return Text(
                   cAddHistory.date,
+                  // cAddHistory.date,
                   style: GoogleFonts.poppins(
                       fontSize: 14, fontWeight: FontWeight.bold),
                 );
@@ -94,12 +136,12 @@ class AddHistory extends StatelessWidget {
               onPressed: () {
                 cAddHistory.addItem({
                   "name": controllerName.text,
-                  "price": double.parse(controllerPrice.text),
+                  "price": controllerPrice.text,
                 });
                 controllerName.clear();
                 controllerPrice.clear();
               },
-              child: Text("Tambah ke Items")),
+              child: const Text("Tambah ke Items")),
           DView.spaceHeight(10),
           Center(
             child: Container(
@@ -171,7 +213,7 @@ class AddHistory extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
             child: InkWell(
               borderRadius: BorderRadius.circular(8),
-              onTap: () {},
+              onTap: () => tambahHistory(),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 child: Center(

@@ -25,13 +25,16 @@ class CAddHistory extends GetxController {
 
   final _total = 0.0.obs;
   double get total => _total.value;
+  setTotal(n) => _total.value = n;
 
   count() {
-    _total.value = _items.map((e) => e['price']).toList().fold(0.0,
+    double total = _items.map((e) => e['price']).toList().fold(0.0,
         (previousValue, element) {
       return double.parse(previousValue.toString()) +
           double.parse(element.toString());
     });
+
+    setTotal(total);
     update();
   }
 }

@@ -26,6 +26,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     cHome.getAnalysis(cUser.data.idUser!);
+    print(cUser.data.toJson());
     super.initState();
   }
 
