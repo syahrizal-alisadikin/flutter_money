@@ -11,11 +11,17 @@ import 'package:money_record/presentasi/controller/history/c_add_history.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../config/session.dart';
 import '../../presentasi/controller/c_home.dart';
 import '../../presentasi/controller/c_user.dart';
 
 class AddHistory extends StatefulWidget {
   const AddHistory({Key? key}) : super(key: key);
+  user() async {
+    final cUser = Get.put(CUser());
+    final user = await Session.getUser();
+    cUser.setData(user);
+  }
 
   @override
   State<AddHistory> createState() => _AddHistoryState();
@@ -33,7 +39,7 @@ class _AddHistoryState extends State<AddHistory> {
   final controllerPrice = TextEditingController();
 
   void initState() {
-    print(cUser.data.toJson());
+    final session = Get.put(Session.getUser());
   }
 
   tambahHistory() async {
@@ -41,7 +47,7 @@ class _AddHistoryState extends State<AddHistory> {
     print(cUser.data.name);
 
     bool success = await SourceHistory.add(
-      cUser.data.idUser ?? "4",
+      cUser.data.idUser!,
       cAddHistory.date,
       cAddHistory.type,
       jsonEncode(cAddHistory.items),
@@ -52,6 +58,7 @@ class _AddHistoryState extends State<AddHistory> {
       DInfo.dialogSuccess('Tambah history success');
       DInfo.closeDialog(actionAfterClose: () {
         Get.back(result: true);
+        Navigator.pop(context);
       });
     }
   }

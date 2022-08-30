@@ -10,6 +10,7 @@ import 'package:money_record/config/app_format.dart';
 import 'package:money_record/config/session.dart';
 import 'package:money_record/pages/auth/login.dart';
 import 'package:money_record/pages/history/add.dart';
+import 'package:money_record/pages/history/income_outcome_page.dart';
 import 'package:money_record/presentasi/controller/c_home.dart';
 import 'package:money_record/presentasi/controller/c_user.dart';
 
@@ -26,7 +27,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     cHome.getAnalysis(cUser.data.idUser!);
-    print(cUser.data.toJson());
+
+    // print(cUser.data.toJson());
     super.initState();
   }
 
@@ -98,49 +100,52 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Expanded(
-              child: ListView(
-                padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
-                children: [
-                  Text(
-                    "Pengeluaran hari ini",
-                    style: Theme.of(context).textTheme.headline6!.copyWith(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
+              child: RefreshIndicator(
+                onRefresh: () => cHome.getAnalysis(cUser.data.idUser!),
+                child: ListView(
+                  padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+                  children: [
+                    Text(
+                      "Pengeluaran hari ini",
+                      style: Theme.of(context).textTheme.headline6!.copyWith(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                    DView.spaceHeight(),
+                    CardToday(context),
+                    DView.spaceHeight(24),
+                    Center(
+                      child: Container(
+                        height: 5,
+                        width: 80,
+                        decoration: BoxDecoration(
+                          color: AppColor.bg,
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                  ),
-                  DView.spaceHeight(),
-                  CardToday(context),
-                  DView.spaceHeight(24),
-                  Center(
-                    child: Container(
-                      height: 5,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        color: AppColor.bg,
-                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                  ),
-                  DView.spaceHeight(30),
-                  Text(
-                    "Pengeluaran Minggu sekarang",
-                    style: Theme.of(context).textTheme.headline6!.copyWith(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
-                  DView.spaceHeight(),
-                  Weekly(),
-                  DView.spaceHeight(30),
-                  Text(
-                    "Perbandingan Bulan ini",
-                    style: Theme.of(context).textTheme.headline6!.copyWith(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
-                  Monthly(context),
-                ],
+                    DView.spaceHeight(30),
+                    Text(
+                      "Pengeluaran Minggu sekarang",
+                      style: Theme.of(context).textTheme.headline6!.copyWith(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                    DView.spaceHeight(),
+                    Weekly(),
+                    DView.spaceHeight(30),
+                    Text(
+                      "Perbandingan Bulan ini",
+                      style: Theme.of(context).textTheme.headline6!.copyWith(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                    Monthly(context),
+                  ],
+                ),
               ),
             )
           ],
@@ -243,7 +248,11 @@ class _HomePageState extends State<HomePage> {
             height: 1,
           ),
           ListTile(
-            onTap: () {},
+            onTap: () {
+              Get.to(
+                () => const IncomeOutcomePage(type: "Pemasukan"),
+              );
+            },
             leading: Icon(Icons.south_west),
             horizontalTitleGap: 0,
             title: Text('Pemasukan'),
@@ -253,7 +262,11 @@ class _HomePageState extends State<HomePage> {
             height: 1,
           ),
           ListTile(
-            onTap: () {},
+            onTap: () {
+              Get.to(
+                () => const IncomeOutcomePage(type: "Pengeluaran"),
+              );
+            },
             leading: Icon(Icons.north_east),
             horizontalTitleGap: 0,
             title: Text('Pengeluaran'),
@@ -307,16 +320,16 @@ class _HomePageState extends State<HomePage> {
                   labelColor: Colors.white,
                 );
               }),
-              // Center(
-              //   child: Obx(() {
-              //     return Text(
-              //       '${cHome.percentIncome}%',
-              //       style: Theme.of(context).textTheme.headline4!.copyWith(
-              //             color: AppColor.primary,
-              //           ),
-              //     );
-              //   }),
-              // ),
+              Center(
+                child: Obx(() {
+                  return Text(
+                    '${cHome.percentIncome}%',
+                    style: Theme.of(context).textTheme.headline4!.copyWith(
+                          color: AppColor.primary,
+                        ),
+                  );
+                }),
+              ),
             ],
           ),
         ),
@@ -403,7 +416,7 @@ class _HomePageState extends State<HomePage> {
               'data': List.generate(7, (index) {
                 return {
                   'domain': cHome.weekText()[index],
-                  'measure': cHome.weeks[index]
+                  'measure': cHome.week[index]
                 };
               }),
             },

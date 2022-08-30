@@ -7,6 +7,7 @@ import 'package:money_record/config/app_asset.dart';
 import 'package:money_record/config/app_color.dart';
 import 'package:money_record/data/source/source_user.dart';
 import 'package:money_record/pages/auth/register.dart';
+import 'package:money_record/pages/history/add.dart';
 import 'package:money_record/pages/home.dart';
 
 class LoginPage extends StatefulWidget {

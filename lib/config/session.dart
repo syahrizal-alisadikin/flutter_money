@@ -6,12 +6,10 @@ import 'package:get/get.dart';
 import '../presentasi/controller/c_user.dart';
 
 class Session {
-  // Save user to shared preferences
   static Future<bool> saveUser(User user) async {
     final pref = await SharedPreferences.getInstance();
-    Map<String, dynamic> userMap = user.toJson();
-
-    String stringUser = jsonEncode(userMap);
+    Map<String, dynamic> mapUser = user.toJson();
+    String stringUser = jsonEncode(mapUser);
     bool success = await pref.setString('user', stringUser);
     if (success) {
       final cUser = Get.put(CUser());
@@ -20,27 +18,24 @@ class Session {
     return success;
   }
 
-  // Get user from shared preferences
   static Future<User> getUser() async {
-    User user = User();
+    User user = User(); // default value
     final pref = await SharedPreferences.getInstance();
     String? stringUser = pref.getString('user');
-
     if (stringUser != null) {
-      Map<String, dynamic> userMap = jsonDecode(stringUser);
-      user = User.fromJson(userMap);
+      Map<String, dynamic> mapUser = jsonDecode(stringUser);
+      user = User.fromJson(mapUser);
     }
     final cUser = Get.put(CUser());
     cUser.setData(user);
     return user;
   }
 
-  // Clear user from shared preferences
   static Future<bool> clearUser() async {
     final pref = await SharedPreferences.getInstance();
     bool success = await pref.remove('user');
-    // final cUser = Get.put(CUser());
-    // cUser.setData(User());
+    final cUser = Get.put(CUser());
+    cUser.setData(User());
     return success;
   }
 }

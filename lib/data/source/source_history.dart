@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 import 'package:money_record/config/api.dart';
 import 'package:money_record/config/app_request.dart';
 import 'package:d_info/d_info.dart';
+import 'package:money_record/data/model/history.dart';
 
 class SourceHistory {
   static Future<Map> analysis(String idUser) async {
@@ -52,5 +53,43 @@ class SourceHistory {
       DInfo.closeDialog();
     }
     return responseBody['success'];
+  }
+
+  static Future<List<History>> getInOut(String idUser, String type) async {
+    String url = '${Api.baseUrl}/history/income_outcome.php';
+    Map? responseBody = await AppRequest.post(url, {
+      'id_user': idUser,
+      'type': type,
+    });
+
+    if (responseBody == null) return [];
+
+    // Jika Success true, maka data history akan di return
+    if (responseBody['success']) {
+      List list = responseBody['data'];
+      return list.map((e) => History.fromJson(e)).toList();
+    } else {
+      return [];
+    }
+  }
+
+  static Future<List<History>> getInOutSearch(
+      String idUser, String type, String date) async {
+    String url = '${Api.baseUrl}/history/income_outcome_search.php';
+    Map? responseBody = await AppRequest.post(url, {
+      'id_user': idUser,
+      'type': type,
+      'date': date,
+    });
+
+    if (responseBody == null) return [];
+
+    // Jika Success true, maka data history akan di return
+    if (responseBody['success']) {
+      List list = responseBody['data'];
+      return list.map((e) => History.fromJson(e)).toList();
+    } else {
+      return [];
+    }
   }
 }
