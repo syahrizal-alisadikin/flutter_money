@@ -10,6 +10,9 @@ import 'package:money_record/pages/auth/register.dart';
 import 'package:money_record/pages/history/add.dart';
 import 'package:money_record/pages/home.dart';
 
+import '../../presentasi/controller/c_user.dart';
+import 'package:get_storage/get_storage.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -18,9 +21,12 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final cUser = Get.put(CUser());
   final controllerEmail = TextEditingController();
   final controllerPassword = TextEditingController();
   final formValidation = GlobalKey<FormState>();
+
+  final box = GetStorage();
   login() async {
     if (formValidation.currentState!.validate()) {
       bool success = await SourceUser.login(
@@ -37,6 +43,15 @@ class _LoginPageState extends State<LoginPage> {
         DInfo.closeDialog();
       }
     }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    print(box.read('user'));
+// out: GetX is the best
+
+    super.initState();
   }
 
   @override
@@ -96,44 +111,53 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           DView.spaceHeight(16),
-                          TextFormField(
-                            controller: controllerPassword,
-                            validator: (value) => value == ""
-                                ? 'Please enter your password'
-                                : null,
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            style: GoogleFonts.poppins(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                            ),
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              fillColor: AppColor.primary.withOpacity(0.6),
-                              filled: true,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                                borderSide: BorderSide.none,
-                              ),
-                              hintText: "Masukan Password",
-                              // labelText: 'Enter your username',
-                              hintStyle: GoogleFonts.poppins(
+                          Obx(() {
+                            return TextFormField(
+                              controller: controllerPassword,
+                              validator: (value) => value == ""
+                                  ? 'Please enter your password'
+                                  : null,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              style: GoogleFonts.poppins(
                                 color: Colors.white,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w400,
                               ),
-                              suffixIcon: Icon(
-                                Icons.visibility,
-                                color: Color(0xff6F7075),
+                              obscureText: cUser.toggle.value,
+                              decoration: InputDecoration(
+                                fillColor: AppColor.primary.withOpacity(0.6),
+                                filled: true,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide.none,
+                                ),
+                                hintText: "Masukan Password",
+                                // labelText: 'Enter your username',
+                                hintStyle: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    cUser.toggle.toggle();
+                                  },
+                                  icon: Icon(
+                                    cUser.toggle.value
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                isDense: true,
+                                contentPadding: EdgeInsets.symmetric(
+                                  vertical: 12,
+                                  horizontal: 16,
+                                ),
                               ),
-                              isDense: true,
-                              contentPadding: EdgeInsets.symmetric(
-                                vertical: 12,
-                                horizontal: 16,
-                              ),
-                            ),
-                          ),
+                            );
+                          }),
                           DView.spaceHeight(30),
                           Material(
                             color: AppColor.primary,

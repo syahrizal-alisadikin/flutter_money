@@ -8,11 +8,13 @@ import 'package:money_record/config/app_asset.dart';
 import 'package:money_record/config/app_color.dart';
 import 'package:money_record/config/app_format.dart';
 import 'package:money_record/config/session.dart';
+import 'package:money_record/data/model/user.dart';
 import 'package:money_record/pages/auth/login.dart';
 import 'package:money_record/pages/history/add.dart';
 import 'package:money_record/pages/history/income_outcome_page.dart';
 import 'package:money_record/presentasi/controller/c_home.dart';
 import 'package:money_record/presentasi/controller/c_user.dart';
+import 'package:get_storage/get_storage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -24,19 +26,23 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final cUser = Get.put(CUser());
   final cHome = Get.put(CHome());
+  final box = GetStorage();
   @override
   void initState() {
-    cHome.getAnalysis(cUser.data.idUser!);
-
+    cHome.getAnalysis(cUser.data.idUser ?? box.read('user')['id_user']);
+    final storageUser = box.read('user');
+    print("storageUser: $storageUser");
     // print(cUser.data.toJson());
     super.initState();
   }
 
   logout() {
     DInfo.dialogSuccess('Logout success');
+
     DInfo.closeDialog(actionAfterClose: () {
       Session.clearUser();
       Get.off(() => const LoginPage());
+      box.remove('user');
     });
   }
 
@@ -67,7 +73,11 @@ class _HomePageState extends State<HomePage> {
                           Obx(
                             () {
                               return Text(
-                                cUser.data.name ?? "Tidak ada ",
+                                cUser.data.name != null
+                                    ? cUser.data.name.toString()
+                                    : (box.read('user') != null
+                                        ? box.read('user')['name'].toString()
+                                        : ""),
                                 style: GoogleFonts.poppins(
                                     fontSize: 16, fontWeight: FontWeight.w600),
                               );
@@ -175,7 +185,11 @@ class _HomePageState extends State<HomePage> {
                             Obx(
                               () {
                                 return Text(
-                                  cUser.data.name ?? "Tidak ada ",
+                                  cUser.data.name == null
+                                      ? (box.read('user') != null
+                                          ? box.read('user')['name'].toString()
+                                          : "")
+                                      : cUser.data.name.toString(),
                                   style: GoogleFonts.poppins(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600),
@@ -185,7 +199,11 @@ class _HomePageState extends State<HomePage> {
                             Obx(
                               () {
                                 return Text(
-                                  cUser.data.email ?? "Tidak ada ",
+                                  cUser.data.email == null
+                                      ? (box.read('user') != null
+                                          ? box.read('user')['email'].toString()
+                                          : "")
+                                      : cUser.data.email.toString(),
                                   style: GoogleFonts.poppins(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w300),

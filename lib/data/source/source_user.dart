@@ -1,12 +1,15 @@
 import 'package:d_info/d_info.dart';
+import 'package:get/state_manager.dart';
 import 'package:money_record/config/api.dart';
 import 'package:money_record/config/app_request.dart';
 import 'package:money_record/config/session.dart';
 import 'package:money_record/data/model/user.dart';
+import 'package:get_storage/get_storage.dart';
 
 class SourceUser {
   static Future<bool> login(String? email, String password) async {
     String url = '${Api.baseUrl}/user/login.php';
+    final box = GetStorage();
 
     Map? responseBody = await AppRequest.post(url, {
       'email': email,
@@ -17,9 +20,14 @@ class SourceUser {
     if (responseBody['login']) {
       var mapUser = responseBody['data'];
       Session.saveUser(User.fromJson(mapUser));
+      box.write('user', {
+        'id_user': mapUser['id_user'],
+        'name': mapUser['name'],
+        'email': mapUser['email'],
+        'password': mapUser['password'],
+      });
     }
     // print('Info Login: ${responseBody['data']}');
-
     return responseBody['login'];
   }
 
@@ -49,4 +57,6 @@ class SourceUser {
 
     return responseBody['register'];
   }
+
+  RxBool toggle = true.obs;
 }

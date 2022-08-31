@@ -92,4 +92,60 @@ class SourceHistory {
       return [];
     }
   }
+
+  static Future<History?> whereDate(
+      String idUser, String date, String type) async {
+    String url = '${Api.baseUrl}/history/where_date.php';
+    Map? responseBody = await AppRequest.post(
+        url, {'id_user': idUser, 'date': date, 'type': type});
+
+    if (responseBody == null) return null;
+
+    // Jika Success true, maka data history akan di return
+    if (responseBody['success']) {
+      var list = responseBody['data'];
+      return History.fromJson(list);
+    } else {
+      return null;
+    }
+  }
+
+  static Future<bool> update(String? idHistory, String? idUser, String? date,
+      String? type, String? details, String total) async {
+    String url = '${Api.baseUrl}/history/update.php';
+
+    Map? responseBody = await AppRequest.post(url, {
+      'id_history': idHistory,
+      'id_user': idUser,
+      'date': date,
+      'type': type,
+      'details': details,
+      'total': total,
+      'updated_at': DateTime.now().toIso8601String(),
+    });
+    if (responseBody == null) return false;
+
+    if (responseBody['success']) {
+      return true;
+    } else {
+      if (responseBody['message'] == 'date') {
+        DInfo.dialogError('Date already exists');
+      } else {
+        DInfo.dialogError('Gagal Update History');
+      }
+      DInfo.closeDialog();
+    }
+    return responseBody['success'];
+  }
+
+  static Future<bool> delete(String? idHistory) async {
+    String url = '${Api.baseUrl}/history/delete.php';
+
+    Map? responseBody = await AppRequest.post(url, {
+      'id_history': idHistory,
+    });
+    if (responseBody == null) return false;
+
+    return responseBody['success'];
+  }
 }

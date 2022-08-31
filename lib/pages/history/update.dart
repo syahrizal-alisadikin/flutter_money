@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:money_record/config/app_color.dart';
 import 'package:money_record/config/app_format.dart';
 import 'package:money_record/data/source/source_history.dart';
-import 'package:money_record/presentasi/controller/history/c_add_history.dart';
+import 'package:money_record/presentasi/controller/history/c_update_history.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -15,8 +15,17 @@ import '../../config/session.dart';
 import '../../presentasi/controller/c_home.dart';
 import '../../presentasi/controller/c_user.dart';
 
-class AddHistory extends StatefulWidget {
-  const AddHistory({Key? key}) : super(key: key);
+class UpadteHistory extends StatefulWidget {
+  const UpadteHistory(
+      {Key? key,
+      required this.date,
+      required this.type,
+      required this.idHistory})
+      : super(key: key);
+
+  final String date;
+  final String type;
+  final String idHistory;
   user() async {
     final cUser = Get.put(CUser());
     final user = await Session.getUser();
@@ -24,11 +33,11 @@ class AddHistory extends StatefulWidget {
   }
 
   @override
-  State<AddHistory> createState() => _AddHistoryState();
+  State<UpadteHistory> createState() => _UpdateHistoryState();
 }
 
-class _AddHistoryState extends State<AddHistory> {
-  final cAddHistory = Get.put(CAddHistory());
+class _UpdateHistoryState extends State<UpadteHistory> {
+  final cUpdateHistory = Get.put(CUpdateHistory());
 
   final cUser = Get.put(CUser());
 
@@ -40,25 +49,27 @@ class _AddHistoryState extends State<AddHistory> {
 
   void initState() {
     final session = Get.put(Session.getUser());
+    cUpdateHistory.init(cUser.data.idUser, widget.date, widget.type);
   }
 
-  tambahHistory() async {
+  updateHistory() async {
     // print(cAddHistory.type);
     print(cUser.data.name);
 
-    bool success = await SourceHistory.add(
+    bool success = await SourceHistory.update(
+      widget.idHistory,
       cUser.data.idUser!,
-      cAddHistory.date,
-      cAddHistory.type,
-      jsonEncode(cAddHistory.items),
-      cAddHistory.total.toString(),
+      cUpdateHistory.date,
+      cUpdateHistory.type,
+      jsonEncode(cUpdateHistory.items),
+      cUpdateHistory.total.toString(),
     );
 
     if (success) {
-      DInfo.dialogSuccess('Tambah history success');
+      DInfo.dialogSuccess('Update history success');
       DInfo.closeDialog(actionAfterClose: () {
         Get.back(result: true);
-        Navigator.pop(context);
+        // Navigator.pop(context);
       });
     }
   }
@@ -67,7 +78,7 @@ class _AddHistoryState extends State<AddHistory> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: DView.appBarLeft(
-        "Tambah History new",
+        "Update History",
       ),
       body: ListView(
         padding: EdgeInsets.all(16),
@@ -77,7 +88,7 @@ class _AddHistoryState extends State<AddHistory> {
             children: [
               Obx(() {
                 return Text(
-                  cAddHistory.date,
+                  cUpdateHistory.date,
                   // cAddHistory.date,
                   style: GoogleFonts.poppins(
                       fontSize: 14, fontWeight: FontWeight.bold),
@@ -92,7 +103,7 @@ class _AddHistoryState extends State<AddHistory> {
                         firstDate: DateTime(2022),
                         lastDate: DateTime(DateTime.now().year + 1));
                     if (result != null) {
-                      cAddHistory
+                      cUpdateHistory
                           .setDate(DateFormat('yyyy-MM-dd').format(result));
                     }
                   },
@@ -107,7 +118,7 @@ class _AddHistoryState extends State<AddHistory> {
           DView.spaceHeight(4),
           Obx(() {
             return DropdownButtonFormField(
-              value: cAddHistory.type,
+              value: cUpdateHistory.type,
               items: ["Pemasukan", "Pengeluaran"].map((e) {
                 return DropdownMenuItem(
                   child: Text(e),
@@ -115,7 +126,7 @@ class _AddHistoryState extends State<AddHistory> {
                 );
               }).toList(),
               onChanged: (value) {
-                cAddHistory.setType(value);
+                cUpdateHistory.setType(value);
               },
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
@@ -141,7 +152,7 @@ class _AddHistoryState extends State<AddHistory> {
           DView.spaceHeight(20),
           ElevatedButton(
               onPressed: () {
-                cAddHistory.addItem({
+                cUpdateHistory.addItem({
                   "name": controllerName.text,
                   "price": controllerPrice.text,
                 });
@@ -176,7 +187,7 @@ class _AddHistoryState extends State<AddHistory> {
               ),
               borderRadius: BorderRadius.circular(5),
             ),
-            child: GetBuilder<CAddHistory>(
+            child: GetBuilder<CUpdateHistory>(
               builder: (_) {
                 return Wrap(
                   spacing: 8,
@@ -184,8 +195,7 @@ class _AddHistoryState extends State<AddHistory> {
                     _.items.length,
                     (index) {
                       return Chip(
-                        label: Text(
-                            _.items[index]["name"] + _.items[index]["price"]),
+                        label: Text(_.items[index]["name"]),
                         deleteIcon: Icon(Icons.close),
                         onDeleted: () => _.deleteItem(index),
                       );
@@ -206,7 +216,7 @@ class _AddHistoryState extends State<AddHistory> {
               DView.spaceWidth(10),
               Obx(() {
                 return Text(
-                  AppFormat.currency(cAddHistory.total.toString()),
+                  AppFormat.currency(cUpdateHistory.total.toString()),
                   style: Theme.of(context).textTheme.headline5!.copyWith(
                         fontWeight: FontWeight.w600,
                         color: AppColor.primary,
@@ -221,7 +231,7 @@ class _AddHistoryState extends State<AddHistory> {
             borderRadius: BorderRadius.circular(8),
             child: InkWell(
               borderRadius: BorderRadius.circular(8),
-              onTap: () => tambahHistory(),
+              onTap: () => updateHistory(),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 child: Center(

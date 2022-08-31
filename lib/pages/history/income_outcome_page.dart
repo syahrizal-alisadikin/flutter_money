@@ -1,3 +1,4 @@
+import 'package:d_info/d_info.dart';
 import 'package:d_view/d_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,10 +7,12 @@ import 'package:intl/intl.dart';
 import 'package:money_record/config/app_color.dart';
 import 'package:money_record/config/app_format.dart';
 import 'package:money_record/data/model/history.dart';
+import 'package:money_record/data/source/source_history.dart';
+import 'package:money_record/pages/history/update.dart';
 import 'package:money_record/pages/home.dart';
 import 'package:money_record/presentasi/controller/history/c_add_history.dart';
 import 'package:money_record/presentasi/controller/history/c_income_outcome.dart';
-
+import 'package:get_storage/get_storage.dart';
 import '../../config/session.dart';
 import '../../presentasi/controller/c_user.dart';
 
@@ -22,22 +25,47 @@ class IncomeOutcomePage extends StatefulWidget {
 }
 
 class _IncomeOutcomePageState extends State<IncomeOutcomePage> {
+  final box = GetStorage();
+
   final cinout = Get.put(CIncomeOutcome());
   final cUser = Get.put(CUser());
   final cAddHistory = Get.put(CAddHistory());
   final controllerDate = TextEditingController();
+
+  menuOption(String value, History history) async {
+    if (value == 'update') {
+      Get.to(() => UpadteHistory(
+            date: history.date.toString(),
+            type: history.type.toString(),
+            idHistory: history.idHistory.toString(),
+          ))?.then((value) {
+        if (value ?? false) {
+          refresh();
+        }
+      });
+    } else if (value == 'delete') {
+      bool success = await SourceHistory.delete(history.idHistory.toString());
+      if (success) {
+        DInfo.dialogSuccess("Data berhasil di hapus");
+        DInfo.closeDialog(actionAfterClose: () {
+          refresh();
+        });
+      }
+    }
+  }
+
   refresh() async {
-    await cinout.getList(cUser.data.idUser ?? "1", widget.type);
+    await cinout.getList(
+        cUser.data.idUser ?? box.read('user')['id_user'], widget.type);
     // print(cUser.data.idUser);
   }
 
   @override
   void initState() {
     // TODO: implement initState
-    final cUser = Get.put(CUser());
     final session = Get.put(Session.getUser());
 
-    print(cUser.data.toJson());
+    // print(cUser.data.toJson());
     refresh();
     super.initState();
   }
@@ -77,7 +105,7 @@ class _IncomeOutcomePageState extends State<IncomeOutcomePage> {
                       suffixIcon: IconButton(
                         onPressed: () {
                           cinout.searchList(
-                            cUser.data.idUser ?? "1",
+                            cUser.data.idUser ?? box.read('user')["id_user"],
                             widget.type,
                             controllerDate.text,
                           );
@@ -130,8 +158,8 @@ class _IncomeOutcomePageState extends State<IncomeOutcomePage> {
               History history = _.list[index];
               return Card(
                 elevation: 6,
-                margin: EdgeInsets.fromLTRB(
-                    16, index == 0 ? 16 : 8, 16, index == 9 ? 16 : 8),
+                margin: EdgeInsets.fromLTRB(16, index == 0 ? 16 : 8, 16,
+                    index == _.list.length - 1 ? 16 : 8),
                 child: Row(
                   children: [
                     DView.spaceWidth(12),
@@ -154,17 +182,17 @@ class _IncomeOutcomePageState extends State<IncomeOutcomePage> {
                     ),
                     PopupMenuButton(
                         itemBuilder: (context) => [
-                              // PopupMenuItem(
-                              //   value: 'edit',
-                              //   child: Text('Edit'),
-                              // ),
-                              // PopupMenuItem(
-                              //   value: 'delete',
-                              //   child: Text('Delete'),
-                              // ),
+                              const PopupMenuItem(
+                                value: 'update',
+                                child: Text('Update'),
+                              ),
+                              const PopupMenuItem(
+                                value: 'delete',
+                                child: Text('Delete'),
+                              ),
                             ],
                         onSelected: (value) {
-                          print(value);
+                          menuOption(value.toString(), history);
                         }),
                   ],
                 ),
