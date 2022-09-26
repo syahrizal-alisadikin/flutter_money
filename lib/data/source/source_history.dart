@@ -94,10 +94,10 @@ class SourceHistory {
   }
 
   static Future<History?> whereDate(
-      String idUser, String date, String type) async {
+      String idhistory, String date, String type) async {
     String url = '${Api.baseUrl}/history/where_date.php';
     Map? responseBody = await AppRequest.post(
-        url, {'id_user': idUser, 'date': date, 'type': type});
+        url, {'id_history': idhistory, 'date': date, 'type': type});
 
     if (responseBody == null) return null;
 
@@ -147,5 +147,41 @@ class SourceHistory {
     if (responseBody == null) return false;
 
     return responseBody['success'];
+  }
+
+  static Future<List<History>> getHistory(String idUser) async {
+    String url = '${Api.baseUrl}/history/history.php';
+    Map? responseBody = await AppRequest.post(url, {
+      'id_user': idUser,
+    });
+
+    if (responseBody == null) return [];
+
+    // Jika Success true, maka data history akan di return
+    if (responseBody['success']) {
+      List list = responseBody['data'];
+      return list.map((e) => History.fromJson(e)).toList();
+    } else {
+      return [];
+    }
+  }
+
+  static Future<List<History>> getHistorySearch(
+      String idUser, String date) async {
+    String url = '${Api.baseUrl}/history/history_search.php';
+    Map? responseBody = await AppRequest.post(url, {
+      'id_user': idUser,
+      'date': date,
+    });
+
+    if (responseBody == null) return [];
+    print(responseBody);
+    // Jika Success true, maka data history akan di return
+    if (responseBody['success']) {
+      List list = responseBody['data'];
+      return list.map((e) => History.fromJson(e)).toList();
+    } else {
+      return [];
+    }
   }
 }

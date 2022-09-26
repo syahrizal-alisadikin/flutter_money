@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:money_record/data/model/history.dart';
 import 'package:money_record/data/source/source_history.dart';
 
-class CIncomeOutcome extends GetxController {
+class CHistory extends GetxController {
   final _loading = false.obs;
 
   bool get loading => _loading.value;
@@ -10,10 +10,10 @@ class CIncomeOutcome extends GetxController {
 
   List<History> get list => _list.value;
 
-  getList(idUser, type) async {
+  getList(idUser) async {
     _loading.value = true;
     update();
-    _list.value = await SourceHistory.getInOut(idUser, type);
+    _list.value = await SourceHistory.getHistory(idUser);
     update();
 
     // Future.delayed(Duration(microseconds: 150000), () {
@@ -27,10 +27,10 @@ class CIncomeOutcome extends GetxController {
     });
   }
 
-  searchList(idUser, type, date) async {
+  searchList(idUser, date) async {
     _loading.value = true;
     update();
-    _list.value = await SourceHistory.getInOutSearch(idUser, type, date);
+    _list.value = await SourceHistory.getHistorySearch(idUser, date);
     update();
 
     // Future.delayed(Duration(microseconds: 150000), () {

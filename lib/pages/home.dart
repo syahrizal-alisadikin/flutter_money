@@ -12,6 +12,7 @@ import 'package:money_record/data/model/user.dart';
 import 'package:money_record/pages/auth/login.dart';
 import 'package:money_record/pages/history/add.dart';
 import 'package:money_record/pages/history/income_outcome_page.dart';
+import 'package:money_record/pages/history/riwayat.dart';
 import 'package:money_record/presentasi/controller/c_home.dart';
 import 'package:money_record/presentasi/controller/c_user.dart';
 import 'package:get_storage/get_storage.dart';
@@ -30,8 +31,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     cHome.getAnalysis(cUser.data.idUser ?? box.read('user')['id_user']);
-    final storageUser = box.read('user');
-    print("storageUser: $storageUser");
+    // final storageUser = box.read('user');
+    // print("storageUser: $storageUser");
     // print(cUser.data.toJson());
     super.initState();
   }
@@ -96,8 +97,8 @@ class _HomePageState extends State<HomePage> {
                           Scaffold.of(ctx).openEndDrawer();
                         },
                         borderRadius: BorderRadius.circular(8),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
                           child: Icon(
                             Icons.menu,
                             color: Colors.white,
@@ -113,7 +114,7 @@ class _HomePageState extends State<HomePage> {
               child: RefreshIndicator(
                 onRefresh: () => cHome.getAnalysis(cUser.data.idUser!),
                 child: ListView(
-                  padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                   children: [
                     Text(
                       "Pengeluaran hari ini",
@@ -123,7 +124,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                     ),
                     DView.spaceHeight(),
-                    CardToday(context),
+                    cardToday(context),
                     DView.spaceHeight(24),
                     Center(
                       child: Container(
@@ -144,7 +145,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                     ),
                     DView.spaceHeight(),
-                    Weekly(),
+                    weekly(),
                     DView.spaceHeight(30),
                     Text(
                       "Perbandingan Bulan ini",
@@ -153,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                             fontWeight: FontWeight.w600,
                           ),
                     ),
-                    Monthly(context),
+                    monthly(context),
                   ],
                 ),
               ),
@@ -167,8 +168,8 @@ class _HomePageState extends State<HomePage> {
       child: ListView(
         children: [
           DrawerHeader(
-            margin: EdgeInsets.only(bottom: 0),
-            padding: EdgeInsets.fromLTRB(20, 16, 16, 16),
+            margin: const EdgeInsets.only(bottom: 0),
+            padding: const EdgeInsets.fromLTRB(20, 16, 16, 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
@@ -250,17 +251,17 @@ class _HomePageState extends State<HomePage> {
           ListTile(
             onTap: () {
               Get.to(
-                () => AddHistory(),
+                () => const AddHistory(),
               )?.then((value) {
                 if (value ?? false) {
                   cHome.getAnalysis(cUser.data.idUser!);
                 }
               });
             },
-            leading: Icon(Icons.add),
+            leading: const Icon(Icons.add),
             horizontalTitleGap: 0,
-            title: Text('Tambahan baru'),
-            trailing: Icon(Icons.navigate_next),
+            title: const Text('Tambahan baru'),
+            trailing: const Icon(Icons.navigate_next),
           ),
           const Divider(
             height: 1,
@@ -271,10 +272,10 @@ class _HomePageState extends State<HomePage> {
                 () => const IncomeOutcomePage(type: "Pemasukan"),
               );
             },
-            leading: Icon(Icons.south_west),
+            leading: const Icon(Icons.south_west),
             horizontalTitleGap: 0,
-            title: Text('Pemasukan'),
-            trailing: Icon(Icons.navigate_next),
+            title: const Text('Pemasukan'),
+            trailing: const Icon(Icons.navigate_next),
           ),
           const Divider(
             height: 1,
@@ -285,20 +286,24 @@ class _HomePageState extends State<HomePage> {
                 () => const IncomeOutcomePage(type: "Pengeluaran"),
               );
             },
-            leading: Icon(Icons.north_east),
+            leading: const Icon(Icons.north_east),
             horizontalTitleGap: 0,
-            title: Text('Pengeluaran'),
-            trailing: Icon(Icons.navigate_next),
+            title: const Text('Pengeluaran'),
+            trailing: const Icon(Icons.navigate_next),
           ),
           const Divider(
             height: 1,
           ),
           ListTile(
-            onTap: () {},
-            leading: Icon(Icons.history),
+            onTap: () {
+              Get.to(
+                () => const RiwayatPage(),
+              );
+            },
+            leading: const Icon(Icons.history),
             horizontalTitleGap: 0,
-            title: Text('Riwayat'),
-            trailing: Icon(Icons.navigate_next),
+            title: const Text('Riwayat'),
+            trailing: const Icon(Icons.navigate_next),
           ),
           const Divider(
             height: 1,
@@ -308,7 +313,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Row Monthly(BuildContext context) {
+  Row monthly(BuildContext context) {
     return Row(
       children: [
         SizedBox(
@@ -366,7 +371,7 @@ class _HomePageState extends State<HomePage> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Pemasukan"),
+                      const Text("Pemasukan"),
                       Text(
                         AppFormat.currency(
                           cHome.monthIncome.toString(),
@@ -391,7 +396,7 @@ class _HomePageState extends State<HomePage> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Pengeluaran"),
+                        const Text("Pengeluaran"),
                         Text(
                           AppFormat.currency(
                             cHome.monthOutcome.toString(),
@@ -423,7 +428,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  AspectRatio Weekly() {
+  AspectRatio weekly() {
     return AspectRatio(
       aspectRatio: 9 / 6,
       child: Obx(() {
@@ -450,7 +455,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Material CardToday(BuildContext context) {
+  Material cardToday(BuildContext context) {
     return Material(
       borderRadius: BorderRadius.circular(12),
       elevation: 8,
@@ -465,7 +470,7 @@ class _HomePageState extends State<HomePage> {
                 AppFormat.currency(cHome.today.toString()),
                 style: Theme.of(context).textTheme.headline4!.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: Color.fromARGB(255, 65, 206, 201),
+                      color: const Color.fromARGB(255, 65, 206, 201),
                     ),
               );
             }),
@@ -483,9 +488,9 @@ class _HomePageState extends State<HomePage> {
             }),
           ),
           Container(
-            margin: EdgeInsets.fromLTRB(16, 0, 0, 16),
-            padding: EdgeInsets.symmetric(vertical: 6),
-            decoration: BoxDecoration(
+            margin: const EdgeInsets.fromLTRB(16, 0, 0, 16),
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(8),
@@ -494,7 +499,7 @@ class _HomePageState extends State<HomePage> {
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: [
+              children: const [
                 Text("Selengkapnya"),
                 Icon(Icons.navigate_next),
               ],

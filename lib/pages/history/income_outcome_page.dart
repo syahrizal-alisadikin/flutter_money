@@ -9,11 +9,9 @@ import 'package:money_record/config/app_format.dart';
 import 'package:money_record/data/model/history.dart';
 import 'package:money_record/data/source/source_history.dart';
 import 'package:money_record/pages/history/update.dart';
-import 'package:money_record/pages/home.dart';
 import 'package:money_record/presentasi/controller/history/c_add_history.dart';
 import 'package:money_record/presentasi/controller/history/c_income_outcome.dart';
 import 'package:get_storage/get_storage.dart';
-import '../../config/session.dart';
 import '../../presentasi/controller/c_user.dart';
 
 class IncomeOutcomePage extends StatefulWidget {
@@ -34,10 +32,13 @@ class _IncomeOutcomePageState extends State<IncomeOutcomePage> {
 
   menuOption(String value, History history) async {
     if (value == 'update') {
+      // print(history.idHistory);
+      // print(history.date);
+      // print(history.type);
       Get.to(() => UpadteHistory(
+            idHistory: history.idHistory.toString(),
             date: history.date.toString(),
             type: history.type.toString(),
-            idHistory: history.idHistory.toString(),
           ))?.then((value) {
         if (value ?? false) {
           refresh();
@@ -62,10 +63,6 @@ class _IncomeOutcomePageState extends State<IncomeOutcomePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    final session = Get.put(Session.getUser());
-
-    // print(cUser.data.toJson());
     refresh();
     super.initState();
   }
@@ -129,7 +126,7 @@ class _IncomeOutcomePageState extends State<IncomeOutcomePage> {
                       ),
                     ),
                     textAlignVertical: TextAlignVertical.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
@@ -141,12 +138,12 @@ class _IncomeOutcomePageState extends State<IncomeOutcomePage> {
           )),
       body: GetBuilder<CIncomeOutcome>(builder: (_) {
         if (_.loading) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         }
         if (_.list.isEmpty) {
-          return Center(
+          return const Center(
             child: Text("Tidak ada data"),
           );
         }

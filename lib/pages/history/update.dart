@@ -49,7 +49,7 @@ class _UpdateHistoryState extends State<UpadteHistory> {
 
   void initState() {
     final session = Get.put(Session.getUser());
-    cUpdateHistory.init(cUser.data.idUser, widget.date, widget.type);
+    cUpdateHistory.init(widget.idHistory, widget.date, widget.type);
   }
 
   updateHistory() async {

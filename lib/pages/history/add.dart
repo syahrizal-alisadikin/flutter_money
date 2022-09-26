@@ -67,7 +67,7 @@ class _AddHistoryState extends State<AddHistory> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: DView.appBarLeft(
-        "Tambah History new",
+        "Tambah History ",
       ),
       body: ListView(
         padding: EdgeInsets.all(16),

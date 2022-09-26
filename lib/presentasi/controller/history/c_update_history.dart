@@ -42,8 +42,8 @@ class CUpdateHistory extends GetxController {
     update();
   }
 
-  init(idUser, date, type) async {
-    History? history = await SourceHistory.whereDate(idUser, date, type);
+  init(idHistory, date, type) async {
+    History? history = await SourceHistory.whereDate(idHistory, date, type);
 
     if (history != null) {
       setDate(history.date);

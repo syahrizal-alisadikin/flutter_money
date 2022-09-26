@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
 // import 'package:google_fonts/google_fonts.dart';
 import 'package:money_record/config/app_color.dart';
-import 'package:money_record/config/session.dart';
-import 'package:money_record/data/model/user.dart';
+// import 'package:money_record/config/session.dart';
+// import 'package:money_record/data/model/user.dart';
 import 'package:money_record/pages/auth/login.dart';
 import 'package:money_record/pages/home.dart';
 import 'package:get_storage/get_storage.dart';
@@ -43,7 +43,7 @@ class _MyAppState extends State<MyApp> {
         appBarTheme: const AppBarTheme(
             backgroundColor: AppColor.primary, foregroundColor: Colors.white),
       ),
-      home: box.read('user') != null ? HomePage() : LoginPage(),
+      home: box.read('user') != null ? const HomePage() : const LoginPage(),
       // home: FutureBuilder(
       //   builder: (context, AsyncSnapshot<User?> snapshot) {
       //     if (snapshot.data == null) {
