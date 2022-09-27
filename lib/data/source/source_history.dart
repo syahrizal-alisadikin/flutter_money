@@ -110,6 +110,22 @@ class SourceHistory {
     }
   }
 
+  static Future<History?> whereDetail(String idUser, String date) async {
+    String url = '${Api.baseUrl}/history/where_detail.php';
+    Map? responseBody =
+        await AppRequest.post(url, {'id_user': idUser, 'date': date});
+
+    if (responseBody == null) return null;
+
+    // Jika Success true, maka data history akan di return
+    if (responseBody['success']) {
+      var list = responseBody['data'];
+      return History.fromJson(list);
+    } else {
+      return null;
+    }
+  }
+
   static Future<bool> update(String? idHistory, String? idUser, String? date,
       String? type, String? details, String total) async {
     String url = '${Api.baseUrl}/history/update.php';

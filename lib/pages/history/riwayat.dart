@@ -13,6 +13,7 @@ import '../../data/model/history.dart';
 import '../../data/source/source_history.dart';
 import '../../presentasi/controller/c_user.dart';
 import '../../presentasi/controller/history/c_history.dart';
+import 'detail_history_page.dart';
 
 class RiwayatPage extends StatefulWidget {
   const RiwayatPage({Key? key}) : super(key: key);
@@ -154,51 +155,59 @@ class _RiwayatPageState extends State<RiwayatPage> {
                 elevation: 6,
                 margin: EdgeInsets.fromLTRB(16, index == 0 ? 16 : 8, 16,
                     index == _.list.length - 1 ? 16 : 8),
-                child: Row(
-                  children: [
-                    DView.spaceWidth(12),
-                    history.type == "Pemasukan"
-                        ? const Icon(Icons.south_west, color: Colors.green)
-                        : const Icon(Icons.north_east, color: Colors.red),
-                    DView.spaceWidth(12),
-                    Text(
-                      AppFormat.date(history.date!),
-                      style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColor.primary),
-                    ),
-                    Expanded(
-                      child: Text(
-                        AppFormat.currency(history.total!),
+                child: InkWell(
+                  onTap: () => {
+                    Get.to(() => DetailHistoryPage(
+                          idUser: box.read('user')['id_user'],
+                          date: history.date,
+                        ))
+                  },
+                  child: Row(
+                    children: [
+                      DView.spaceWidth(12),
+                      history.type == "Pemasukan"
+                          ? const Icon(Icons.south_west, color: Colors.green)
+                          : const Icon(Icons.north_east, color: Colors.red),
+                      DView.spaceWidth(12),
+                      Text(
+                        AppFormat.date(history.date!),
                         style: GoogleFonts.poppins(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: AppColor.primary),
-                        textAlign: TextAlign.end,
                       ),
-                    ),
-                    // PopupMenuButton(
-                    //     itemBuilder: (context) => [
-                    //           const PopupMenuItem(
-                    //             value: 'delete',
-                    //             child: Text('Delete'),
-                    //           ),
-                    //         ],
-                    //     onSelected: (value) {
-                    //       menuOption(value.toString(), history);
-                    //     }),
-                    // icon delete
-                    IconButton(
-                      onPressed: () {
-                        delete(history.idHistory.toString());
-                      },
-                      icon: const Icon(
-                        Icons.delete,
-                        color: Colors.red,
+                      Expanded(
+                        child: Text(
+                          AppFormat.currency(history.total!),
+                          style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.primary),
+                          textAlign: TextAlign.end,
+                        ),
                       ),
-                    ),
-                  ],
+                      // PopupMenuButton(
+                      //     itemBuilder: (context) => [
+                      //           const PopupMenuItem(
+                      //             value: 'delete',
+                      //             child: Text('Delete'),
+                      //           ),
+                      //         ],
+                      //     onSelected: (value) {
+                      //       menuOption(value.toString(), history);
+                      //     }),
+                      // icon delete
+                      IconButton(
+                        onPressed: () {
+                          delete(history.idHistory.toString());
+                        },
+                        icon: const Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             },

@@ -8,6 +8,7 @@ import 'package:money_record/config/app_color.dart';
 import 'package:money_record/config/app_format.dart';
 import 'package:money_record/data/model/history.dart';
 import 'package:money_record/data/source/source_history.dart';
+import 'package:money_record/pages/history/detail_history_page.dart';
 import 'package:money_record/pages/history/update.dart';
 import 'package:money_record/presentasi/controller/history/c_add_history.dart';
 import 'package:money_record/presentasi/controller/history/c_income_outcome.dart';
@@ -157,41 +158,50 @@ class _IncomeOutcomePageState extends State<IncomeOutcomePage> {
                 elevation: 6,
                 margin: EdgeInsets.fromLTRB(16, index == 0 ? 16 : 8, 16,
                     index == _.list.length - 1 ? 16 : 8),
-                child: Row(
-                  children: [
-                    DView.spaceWidth(12),
-                    Text(
-                      AppFormat.date(history.date!),
-                      style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColor.primary),
-                    ),
-                    Expanded(
-                      child: Text(
-                        AppFormat.currency(history.total!),
+                child: InkWell(
+                  onTap: () => {
+                    Get.to(() => DetailHistoryPage(
+                          idUser: box.read('user')['id_user'],
+                          date: history.date,
+                        ))
+                  },
+                  borderRadius: BorderRadius.circular(8),
+                  child: Row(
+                    children: [
+                      DView.spaceWidth(12),
+                      Text(
+                        AppFormat.date(history.date!),
                         style: GoogleFonts.poppins(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: AppColor.primary),
-                        textAlign: TextAlign.end,
                       ),
-                    ),
-                    PopupMenuButton(
-                        itemBuilder: (context) => [
-                              const PopupMenuItem(
-                                value: 'update',
-                                child: Text('Update'),
-                              ),
-                              const PopupMenuItem(
-                                value: 'delete',
-                                child: Text('Delete'),
-                              ),
-                            ],
-                        onSelected: (value) {
-                          menuOption(value.toString(), history);
-                        }),
-                  ],
+                      Expanded(
+                        child: Text(
+                          AppFormat.currency(history.total!),
+                          style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.primary),
+                          textAlign: TextAlign.end,
+                        ),
+                      ),
+                      PopupMenuButton(
+                          itemBuilder: (context) => [
+                                const PopupMenuItem(
+                                  value: 'update',
+                                  child: Text('Update'),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'delete',
+                                  child: Text('Delete'),
+                                ),
+                              ],
+                          onSelected: (value) {
+                            menuOption(value.toString(), history);
+                          }),
+                    ],
+                  ),
                 ),
               );
             },

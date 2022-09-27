@@ -4,13 +4,14 @@ import 'package:d_view/d_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:money_record/config/app_asset.dart';
 import 'package:money_record/config/app_color.dart';
 import 'package:money_record/config/app_format.dart';
 import 'package:money_record/config/session.dart';
-import 'package:money_record/data/model/user.dart';
 import 'package:money_record/pages/auth/login.dart';
 import 'package:money_record/pages/history/add.dart';
+import 'package:money_record/pages/history/detail_history_page.dart';
 import 'package:money_record/pages/history/income_outcome_page.dart';
 import 'package:money_record/pages/history/riwayat.dart';
 import 'package:money_record/presentasi/controller/c_home.dart';
@@ -487,22 +488,32 @@ class _HomePageState extends State<HomePage> {
               );
             }),
           ),
-          Container(
-            margin: const EdgeInsets.fromLTRB(16, 0, 0, 16),
-            padding: const EdgeInsets.symmetric(vertical: 6),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8),
-                bottomLeft: Radius.circular(8),
+          GestureDetector(
+            onTap: () {
+              Get.to(
+                () => DetailHistoryPage(
+                  idUser: box.read('user')['id_user'].toString(),
+                  date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+                ),
+              );
+            },
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(16, 0, 0, 16),
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  bottomLeft: Radius.circular(8),
+                ),
               ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: const [
-                Text("Selengkapnya"),
-                Icon(Icons.navigate_next),
-              ],
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: const [
+                  Text("Selengkapnya"),
+                  Icon(Icons.navigate_next),
+                ],
+              ),
             ),
           ),
         ],
